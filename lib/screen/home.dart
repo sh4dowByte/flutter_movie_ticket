@@ -1,46 +1,100 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_booking_app/models/movie.dart';
+import 'package:flutter_movie_booking_app/providers/genres_provider.dart';
+import 'package:flutter_movie_booking_app/providers/movie_detail_provider.dart';
+import 'package:flutter_movie_booking_app/widget/app_movie_card_box.dart';
+import 'package:flutter_movie_booking_app/widget/app_skeleton.dart';
 import 'package:flutter_movie_booking_app/widget/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 
+import '../config/routes.dart';
 import '../providers/movie_provider.dart';
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final movieState = ref.watch(movieProvider);
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage> {
+  final ScrollController _scrollControllerDiscover = ScrollController();
+  final ScrollController _scrollControllerPopular = ScrollController();
+  int genreId = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(nowPlayingMoviesProvider.notifier).fetchNowPlayingMovies();
+      ref.read(popularMoviesProvider.notifier).fetchPopularMovies();
+      ref.read(genresProvider.notifier).fetchGenres();
+      ref.read(discoverMoviesProvider.notifier).fetchDiscoverMovies(genreId);
+    });
+
+    _scrollControllerDiscover.addListener(() {
+      if (_scrollControllerDiscover.position.pixels >=
+          _scrollControllerDiscover.position.maxScrollExtent) {
+        // Panggil fungsi untuk memuat data baru
+        ref.read(discoverMoviesProvider.notifier).fetchDiscoverMovies(genreId);
+      }
+    });
+
+    _scrollControllerPopular.addListener(() {
+      if (_scrollControllerPopular.position.pixels >=
+          _scrollControllerPopular.position.maxScrollExtent) {
+        // Panggil fungsi untuk memuat data baru
+        ref.read(popularMoviesProvider.notifier).fetchPopularMovies();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollControllerDiscover.dispose();
+    _scrollControllerPopular.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final movieStateNowPlaying = ref.watch(nowPlayingMoviesProvider);
+    final movieStatePopular = ref.watch(popularMoviesProvider);
+    final genresState = ref.watch(genresProvider);
+    final discoverMovieState = ref.watch(discoverMoviesProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Movies'),
-        actions: [
-          IconButton(
-            onPressed: () {
-              ref.read(movieProvider.notifier).fetchPopularMovies();
-              ref.read(movieProvider.notifier).fetchNowPlayingMovies();
-              ref.read(movieProvider.notifier).fetchRecommendedMovies(1106739);
-            },
-            icon: const Icon(Icons.refresh),
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: const Text('Movies'),
+      //   actions: [
+      //     IconButton(
+      //       onPressed: () {
+      //         // ref.read(movieProvider.notifier).fetchPopularMovies();
+      //         ref
+      //             .read(nowPlayingMoviesProvider.notifier)
+      //             .fetchNowPlayingMovies();
+      //         ref.read(popularMoviesProvider.notifier).fetchPopularMovies();
+      //       },
+      //       icon: const Icon(Icons.refresh),
+      //     ),
+      //   ],
+      // ),
       body: ListView(
         children: [
           // Now Playing
-          movieState.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : movieState.error != null
-                  ? Center(child: Text('Error: ${movieState.error}'))
+          movieStateNowPlaying.isLoading
+              ? AppImageSlider.loading()
+              : movieStateNowPlaying.error != null
+                  ? Center(child: Text('Error: ${movieStateNowPlaying.error}'))
                   : SizedBox(
                       height: 362,
                       child: AppImageSlider(
-                        data: movieState.nowPlayingMovies
+                        data: movieStateNowPlaying.movies
                             .map((movie) => {
                                   'title': movie.title,
-                                  'image':
-                                      'https://image.tmdb.org/t/p/w1280${movie.posterPath}'
+                                  'image': movie.imageUrlOriginal
                                 })
                             .take(10)
                             .toList(),
@@ -76,21 +130,31 @@ class HomePage extends ConsumerWidget {
 
           const SizedBox(height: 23),
 
-          // Categories
-          const AppSelectItemSmall(item: [
-            {'id': 1, 'name': 'All'},
-            {'id': 2, 'name': 'Action'},
-            {'id': 3, 'name': 'Adventure'},
-            {'id': 4, 'name': 'Horror'},
-            {'id': 5, 'name': 'All'},
-            {'id': 6, 'name': 'Action'},
-            {'id': 7, 'name': 'Adventure'},
-            {'id': 8, 'name': 'Horror'},
-          ]),
+          // Genres
+          genresState.isLoading
+              ? AppSelectItemSmall.loading()
+              : genresState.error != null
+                  ? Center(child: Text('Error: ${genresState.error}'))
+                  : AppSelectItemSmall(
+                      onChange: (id) {
+                        ref
+                            .read(discoverMoviesProvider.notifier)
+                            .fetchDiscoverMovies(id);
+
+                        genreId = id;
+                      },
+                      item: [
+                        const {
+                          'id': 0,
+                          'name': 'All',
+                        },
+                        ...genresState.genres!.map((e) => e.toJson())
+                      ],
+                    ),
 
           const SizedBox(height: 23),
 
-          // popular
+          // Discover
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 12),
             child: Row(
@@ -102,40 +166,37 @@ class HomePage extends ConsumerWidget {
             height: 16,
           ),
 
-          movieState.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : movieState.error != null
-                  ? Center(child: Text('Error: ${movieState.error}'))
+          discoverMovieState.isLoading
+              ? AppMovieCoverBox.loading()
+              : discoverMovieState.error != null
+                  ? Center(child: Text('Error: ${discoverMovieState.error}'))
                   : SizedBox(
                       height: 220,
                       child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: movieState.popularMovies.length,
+                          controller: _scrollControllerDiscover,
+                          itemCount: discoverMovieState.movies.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
-                            final item = movieState.popularMovies[index];
+                            final item = discoverMovieState.movies[index];
+
+                            // Tampilkan indikator loading di akhir daftar
+                            if (index == discoverMovieState.movies.length) {
+                              return discoverMovieState.isLoading
+                                  ? const Center(
+                                      child: CircularProgressIndicator())
+                                  : const SizedBox();
+                            }
 
                             EdgeInsets margin = EdgeInsets.only(
                               left: index == 0 ? 11 : 4,
                               right:
-                                  index == movieState.popularMovies.length - 1
+                                  index == discoverMovieState.movies.length - 1
                                       ? 11
                                       : 4,
                             );
 
-                            return Container(
-                              margin: margin,
-                              key: PageStorageKey(index),
-                              width: 162,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(13),
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      'https://image.tmdb.org/t/p/w1280${item.posterPath}',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
+                            return AppMovieCoverBox(item: item, margin: margin);
                           }),
                     ),
 
@@ -153,40 +214,29 @@ class HomePage extends ConsumerWidget {
             height: 16,
           ),
 
-          movieState.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : movieState.error != null
-                  ? Center(child: Text('Error: ${movieState.error}'))
+          movieStatePopular.isLoading
+              ? AppMovieCoverBox.loading()
+              : movieStatePopular.error != null
+                  ? Center(child: Text('Error: ${movieStatePopular.error}'))
                   : SizedBox(
                       height: 220,
                       child: ListView.builder(
                           shrinkWrap: true,
-                          itemCount: movieState.popularMovies.length,
+                          controller: _scrollControllerPopular,
+                          itemCount: movieStatePopular.movies.length,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: (context, index) {
-                            final item = movieState.popularMovies[index];
+                            final item = movieStatePopular.movies[index];
 
                             EdgeInsets margin = EdgeInsets.only(
                               left: index == 0 ? 11 : 4,
                               right:
-                                  index == movieState.popularMovies.length - 1
+                                  index == movieStatePopular.movies.length - 1
                                       ? 11
                                       : 4,
                             );
 
-                            return Container(
-                              margin: margin,
-                              key: PageStorageKey(index),
-                              width: 162,
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(13),
-                                child: CachedNetworkImage(
-                                  imageUrl:
-                                      'https://image.tmdb.org/t/p/w1280${item.posterPath}',
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
+                            return AppMovieCoverBox(item: item, margin: margin);
                           }),
                     ),
         ],

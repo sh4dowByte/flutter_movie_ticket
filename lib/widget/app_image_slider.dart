@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter_movie_booking_app/widget/app_skeleton.dart';
 
 class AppImageSlider extends StatefulWidget {
   final List<Map<String, dynamic>> data;
@@ -9,6 +9,15 @@ class AppImageSlider extends StatefulWidget {
 
   @override
   State<AppImageSlider> createState() => _AppImageSliderState();
+
+  static Widget loading() {
+    return const Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10),
+      child: AppSkeleton(
+        height: 362,
+      ),
+    );
+  }
 }
 
 class _AppImageSliderState extends State<AppImageSlider>

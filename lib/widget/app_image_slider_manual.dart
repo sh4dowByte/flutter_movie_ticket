@@ -37,16 +37,18 @@ class _AppImageSliderManualState extends State<AppImageSliderManual> {
       fit: StackFit.expand,
       children: [
         // Background image
-        Positioned.fill(
-          child: CachedNetworkImage(
-            imageUrl: widget.data[_currentPage.toInt()]['image']!,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => const Center(
-              child: CircularProgressIndicator(),
+        if (widget.data.isNotEmpty) ...[
+          Positioned.fill(
+            child: CachedNetworkImage(
+              imageUrl: widget.data[_currentPage.toInt()]['image']!,
+              fit: BoxFit.cover,
+              placeholder: (context, url) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+              errorWidget: (context, url, error) => const Icon(Icons.error),
             ),
-            errorWidget: (context, url, error) => const Icon(Icons.error),
           ),
-        ),
+        ],
 
         // Blur filter and gradient overlay
         ClipRRect(

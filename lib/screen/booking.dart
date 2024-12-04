@@ -12,7 +12,7 @@ class BookingPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final movieState = ref.watch(movieProvider);
+    final movieState = ref.watch(nowPlayingMoviesProvider);
 
     return Scaffold(
       // extendBodyBehindAppBar: true,
@@ -31,7 +31,7 @@ class BookingPage extends ConsumerWidget {
                   : SizedBox(
                       height: 500,
                       child: AppImageSliderManual(
-                        data: movieState.nowPlayingMovies
+                        data: movieState.movies
                             .map((movie) => {
                                   'title': movie.title,
                                   'image':

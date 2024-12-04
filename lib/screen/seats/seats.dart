@@ -15,6 +15,7 @@ class SeatsPage extends ConsumerWidget {
       body: Stack(
         children: [
           ListView(
+            padding: const EdgeInsets.only(bottom: 100),
             children: const [
               // Seats
               Center(

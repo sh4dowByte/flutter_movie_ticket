@@ -30,7 +30,7 @@ class AppTheme {
         backgroundColor: Color(0xFF22215B), // Warna latar belakang
         foregroundColor: Colors.white,
       ),
-      cardColor: const Color(0xFFF7F7F7).withOpacity(0.6),
+      cardColor: const Color(0xFF3F414E),
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.white,
         surfaceTintColor: Colors.transparent,

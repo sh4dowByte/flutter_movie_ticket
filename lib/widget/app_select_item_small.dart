@@ -1,13 +1,36 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_booking_app/widget/app_skeleton.dart';
 
 import '../config/pallete.dart';
 
 class AppSelectItemSmall extends StatefulWidget {
   final List<Map<String, dynamic>> item;
-  const AppSelectItemSmall({super.key, required this.item});
+  final Function(int)? onChange;
+  final int activeId;
+  const AppSelectItemSmall(
+      {super.key, required this.item, this.onChange, this.activeId = 0});
 
   @override
   State<AppSelectItemSmall> createState() => _AppSelectItemSmallState();
+
+  static Widget loading() {
+    return SizedBox(
+      height: 46,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: 10, // Jumlah skeleton placeholder
+        itemBuilder: (context, index) {
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+            child: AppSkeleton(
+              borderRadius: BorderRadius.circular(23),
+              width: 120,
+            ),
+          );
+        },
+      ),
+    );
+  }
 }
 
 class _AppSelectItemSmallState extends State<AppSelectItemSmall> {
@@ -20,10 +43,18 @@ class _AppSelectItemSmallState extends State<AppSelectItemSmall> {
   //   {'id': 6, 'name': 'Volleyball', 'icon': 'image 1.png'},
   // ];
 
-  int activeIds = 1;
+  int activeIds = 0;
+  @override
+  void initState() {
+    super.initState();
+    activeIds = widget.activeId;
+  }
 
   void toggleItemById(int id) {
     setState(() {
+      if (widget.onChange != null && activeIds != id) {
+        widget.onChange!(id);
+      }
       activeIds = id;
     });
   }
