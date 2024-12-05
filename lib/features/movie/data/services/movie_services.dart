@@ -1,15 +1,15 @@
 import 'package:dio/dio.dart';
-import 'package:flutter_movie_booking_app/models/genres.dart';
-import 'package:flutter_movie_booking_app/models/movie_detail.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_movie_booking_app/features/movie/data/models/genres.dart';
+import 'package:flutter_movie_booking_app/features/movie/data/models/movie_detail.dart';
 import '../models/movie.dart';
 
 class MovieService {
   final Dio _dio = Dio(
     BaseOptions(
-      baseUrl: 'https://api.themoviedb.org/3',
+      baseUrl: dotenv.env['TMDB_API_BASE_URL']!,
       headers: {
-        'Authorization':
-            'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4YTUzMDI4Nzg2NGVmNGJhMmZiZjYzYWJmYjZiMmVhNCIsIm5iZiI6MTczMzEzMTU0Mi44MTIsInN1YiI6IjY3NGQ3ZDE2YmMxOTFmNmZmNTYxZDAxNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.uMJLRk5U8a4XW3kCknJIVoiPP-O3WbGToiNEbGNPlt4',
+        'Authorization': 'Bearer ${dotenv.env['TMDB_ACCESS_TOKEN']}',
         'Content-Type': 'application/json;charset=utf-8',
       },
     ),
@@ -17,7 +17,7 @@ class MovieService {
 
   Future<List<Movie>> fetchPopularMovies(int page) async {
     try {
-      final response = await _dio.get('/movie/popular', queryParameters: {
+      final response = await _dio.get('/3/movie/popular', queryParameters: {
         'language': 'en-US',
         'page': page,
       });
@@ -35,7 +35,7 @@ class MovieService {
 
   Future<List<Movie>> fetchNowPlayingMovies() async {
     try {
-      final response = await _dio.get('/movie/now_playing', queryParameters: {
+      final response = await _dio.get('/3/movie/now_playing', queryParameters: {
         'language': 'en-US',
       });
 
@@ -53,7 +53,7 @@ class MovieService {
   Future<List<Movie>> fetchRecommendedMovies(int movieId) async {
     try {
       final response = await _dio.get(
-        '/movie/$movieId/recommendations',
+        '/3/movie/$movieId/recommendations',
         queryParameters: {
           'language': 'en-US',
         },
@@ -73,7 +73,7 @@ class MovieService {
   Future<MovieDetail> fetchMovieDetails(int movieId) async {
     try {
       final response = await _dio.get(
-        '/movie/$movieId',
+        '/3/movie/$movieId',
         queryParameters: {
           'language': 'en-US',
         },
@@ -92,7 +92,7 @@ class MovieService {
   Future<List<Genres>> fetchGenres() async {
     try {
       final response = await _dio.get(
-        '/genre/movie/list?language=en',
+        '/3/genre/movie/list?language=en',
         queryParameters: {
           'language': 'en-US',
         },
@@ -112,7 +112,7 @@ class MovieService {
   Future<List<Movie>> fetchDiscover({int page = 1, int genres = 0}) async {
     try {
       final response = await _dio.get(
-        '/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc',
+        '/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc',
         queryParameters: {
           'language': 'en-US',
           'page': page,

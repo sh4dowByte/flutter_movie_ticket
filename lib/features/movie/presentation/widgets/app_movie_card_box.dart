@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_booking_app/config/routes.dart';
-import 'package:flutter_movie_booking_app/models/movie.dart';
+import 'package:flutter_movie_booking_app/features/movie/data/models/movie.dart';
 import 'package:flutter_movie_booking_app/widget/app_skeleton.dart';
 
 class AppMovieCoverBox extends StatelessWidget {

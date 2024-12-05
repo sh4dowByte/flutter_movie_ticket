@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_movie_booking_app/screen/seats/components/seats_layout_component.dart';
+import 'package:flutter_movie_booking_app/features/ticket/presentation/screens/seats/components/seats_layout_component.dart';
 import 'package:flutter_movie_booking_app/widget/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

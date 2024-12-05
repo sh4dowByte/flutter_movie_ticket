@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import '../screen/screen.dart';
+
+import '../features/movie/presentation/screens/screens.dart';
+import '../screens/menu.dart';
 
 class Routes {
   static const String menu = '/menu';

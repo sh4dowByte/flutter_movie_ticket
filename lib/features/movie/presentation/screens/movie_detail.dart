@@ -1,12 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_movie_booking_app/models/movie_detail.dart';
-import 'package:flutter_movie_booking_app/providers/movie_detail_provider.dart';
+import 'package:flutter_movie_booking_app/features/movie/data/models/movie_detail.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_detail_provider.dart';
 import 'package:flutter_movie_booking_app/widget/app_circle_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../config/pallete.dart';
+import '../../../../config/pallete.dart';
 
 class MovieDetailPage extends ConsumerStatefulWidget {
   const MovieDetailPage(this.movieId, {super.key});
@@ -61,7 +61,7 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
         headerSliverBuilder: (BuildContext context, bool innnerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-              expandedHeight: 400.0,
+              expandedHeight: 500.0,
               floating: false,
               pinned: true,
               automaticallyImplyLeading: false,
@@ -114,8 +114,14 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
                   color: Theme.of(context).scaffoldBackgroundColor,
-                  child: HeaderBodySliver(
-                    image: movieState.movie!.imageUrlOriginal,
+                  child: movieState.when(
+                    data: (value) => CachedNetworkImage(
+                      imageUrl: value.backdropUrlOriginal,
+                      fit: BoxFit.cover,
+                    ), // Data berhasil dimuat
+                    loading: () => const Text(''),
+                    error: (error, stackTrace) =>
+                        Center(child: Text('Error: $error')),
                   ),
                 ),
               ),
@@ -127,14 +133,12 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
             Builder(
               builder: (BuildContext context) {
                 return SingleChildScrollView(
-                  child: movieState.isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : movieState.error != null
-                          ? Center(child: Text('Error: ${movieState.error}'))
-                          : movieState.movie != null
-                              ? MovieDetailContent(movie: movieState.movie!)
-                              : const Center(
-                                  child: Text('No movie data available')),
+                  child: movieState.when(
+                      data: (data) => MovieDetailContent(movie: data),
+                      error: (error, stackTrace) =>
+                          Center(child: Text('Error: $error')),
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator())),
                 );
               },
             ),
@@ -193,26 +197,10 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
   }
 }
 
-class HeaderBodySliver extends StatelessWidget {
-  final String image;
-  const HeaderBodySliver({
-    super.key,
-    required this.image,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return CachedNetworkImage(
-      imageUrl: image,
-      fit: BoxFit.cover,
-    );
-  }
-}
-
 class MovieDetailContent extends StatelessWidget {
   final MovieDetail movie;
 
-  const MovieDetailContent({Key? key, required this.movie}) : super(key: key);
+  const MovieDetailContent({super.key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
@@ -221,7 +209,7 @@ class MovieDetailContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(movie.title, style: Theme.of(context).textTheme.headline5),
+          Text(movie.title, style: Theme.of(context).textTheme.displaySmall),
           const SizedBox(height: 10),
           Text('Release Date: ${movie.releaseDate}'),
           const SizedBox(height: 10),

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../widget/widget.dart';
+import '../../../../../../widget/widget.dart';
 
 class SeatLayoutComponent extends StatefulWidget {
   const SeatLayoutComponent({super.key});

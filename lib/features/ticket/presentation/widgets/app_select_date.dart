@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../config/pallete.dart';
-
 class AppSelectDate extends StatefulWidget {
   final List<String> item;
   const AppSelectDate({super.key, required this.item});
@@ -79,7 +77,7 @@ class _AppSelectDateState extends State<AppSelectDate> {
                               ? Colors.white
                               : const Color(0xFF8F8F8F)),
                     ),
-                    SizedBox(height: 5),
+                    const SizedBox(height: 5),
                     Text(
                       day.toString(),
                       textAlign: TextAlign.center,

@@ -34,7 +34,7 @@ class _AppImageSliderState extends State<AppImageSlider>
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(
-          seconds: 3), // Set the duration for the progress animation
+          seconds: 5), // Set the duration for the progress animation
     );
 
     // Timer untuk mengubah halaman otomatis setiap 3 detik

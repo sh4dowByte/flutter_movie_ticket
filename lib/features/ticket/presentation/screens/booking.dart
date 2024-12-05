@@ -1,11 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_movie_booking_app/widget/app_select_time.dart';
+import 'package:flutter_movie_booking_app/features/ticket/presentation/widgets/app_select_time.dart';
 import 'package:flutter_movie_booking_app/widget/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../providers/movie_provider.dart';
-import '../widget/app_select_date.dart';
+import '../../../movie/providers/movie_provider.dart';
+import '../widgets/app_select_date.dart';
 
 class BookingPage extends ConsumerWidget {
   const BookingPage({super.key});
@@ -24,23 +23,23 @@ class BookingPage extends ConsumerWidget {
       body: ListView(
         children: [
           // Now Playing
-          movieState.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : movieState.error != null
-                  ? Center(child: Text('Error: ${movieState.error}'))
-                  : SizedBox(
-                      height: 500,
-                      child: AppImageSliderManual(
-                        data: movieState.movies
-                            .map((movie) => {
-                                  'title': movie.title,
-                                  'image':
-                                      'https://image.tmdb.org/t/p/w1280${movie.posterPath}'
-                                })
-                            .take(10)
-                            .toList(),
-                      ),
-                    ),
+          movieState.when(
+            loading: () => AppSelectItemSmall.loading(),
+            error: (error, stackTrace) => Center(child: Text('Error: $error')),
+            data: (data) => SizedBox(
+              height: 500,
+              child: AppImageSliderManual(
+                data: data
+                    .map((movie) => {
+                          'title': movie.title,
+                          'image':
+                              'https://image.tmdb.org/t/p/w1280${movie.posterPath}'
+                        })
+                    .take(10)
+                    .toList(),
+              ),
+            ),
+          ),
 
           // Select date
           const Padding(

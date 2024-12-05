@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'screen.dart';
 import '../config/pallete.dart';
 import '../widget/widget.dart';
+import '../features/movie/presentation/screens/screens.dart';
+import '../features/ticket/presentation/screens/screens.dart';
 
 class MenuPage extends StatefulWidget {
   const MenuPage({super.key});

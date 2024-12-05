@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_booking_app/widget/app_skeleton.dart';
 
-import '../config/pallete.dart';
-
 class AppSelectItemSmall extends StatefulWidget {
   final List<Map<String, dynamic>> item;
   final Function(int)? onChange;
