@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../config/pallete.dart';
+import '../core/pallete.dart';
 import '../widget/widget.dart';
 import '../features/movie/presentation/screens/screens.dart';
 import '../features/ticket/presentation/screens/screens.dart';

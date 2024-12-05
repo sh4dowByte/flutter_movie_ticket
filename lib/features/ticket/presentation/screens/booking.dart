@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_now_playing.dart';
 import 'package:flutter_movie_booking_app/features/ticket/presentation/widgets/app_select_time.dart';
 import 'package:flutter_movie_booking_app/widget/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../movie/providers/movie_provider.dart';
 import '../widgets/app_select_date.dart';
 
 class BookingPage extends ConsumerWidget {

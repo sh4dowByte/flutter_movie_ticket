@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_movie_booking_app/features/movie/data/models/movie.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/genres_provider.dart';
 import 'package:flutter_movie_booking_app/features/movie/presentation/widgets/app_movie_card_box.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_discover_provider.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_now_playing.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_popular_provider.dart';
 import 'package:flutter_movie_booking_app/widget/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/movie_provider.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -31,7 +33,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     _scrollControllerDiscover.addListener(() {
       if (_scrollControllerDiscover.position.pixels >=
           _scrollControllerDiscover.position.maxScrollExtent) {
-        // Panggil fungsi untuk memuat data baru
         ref.read(discoverMoviesProvider.notifier).fetchDiscoverMovies(genreId);
       }
     });
@@ -39,7 +40,6 @@ class _HomePageState extends ConsumerState<HomePage> {
     _scrollControllerPopular.addListener(() {
       if (_scrollControllerPopular.position.pixels >=
           _scrollControllerPopular.position.maxScrollExtent) {
-        // Panggil fungsi untuk memuat data baru
         ref.read(popularMoviesProvider.notifier).fetchPopularMovies();
       }
     });
@@ -204,34 +204,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             loading: () => AppMovieCoverBox.loading(),
             error: (error, stackTrace) => Center(child: Text('Error: $error')),
           )
-
-          // AppBuilder(
-          //   state: movieStatePopular,
-          //   onLoading: AppMovieCoverBox.loading(),
-          //   onError: (state) {
-          //     return Center(child: Text('Error: ${state.error}'));
-          //   },
-          //   onComplete: (state) {
-          //     return SizedBox(
-          //       height: 220,
-          //       child: ListView.builder(
-          //           shrinkWrap: true,
-          //           controller: _scrollControllerPopular,
-          //           itemCount: state.movies.length,
-          //           scrollDirection: Axis.horizontal,
-          //           itemBuilder: (context, index) {
-          //             final item = state.movies[index];
-
-          //             EdgeInsets margin = EdgeInsets.only(
-          //               left: index == 0 ? 11 : 4,
-          //               right: index == state.movies.length - 1 ? 11 : 4,
-          //             );
-
-          //             return AppMovieCoverBox(item: item, margin: margin);
-          //           }),
-          //     );
-          //   },
-          // ),
         ],
       ),
     );

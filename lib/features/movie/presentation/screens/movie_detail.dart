@@ -6,7 +6,7 @@ import 'package:flutter_movie_booking_app/widget/app_circle_button.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../../../config/pallete.dart';
+import '../../../../core/pallete.dart';
 
 class MovieDetailPage extends ConsumerStatefulWidget {
   const MovieDetailPage(this.movieId, {super.key});
