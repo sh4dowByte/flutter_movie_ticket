@@ -288,7 +288,7 @@ class _AppImageSliderState extends State<AppImageSlider>
                                 width: _animationController.value *
                                     activeWidth, // Progress width dinamis
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF0B51B9),
+                                  color: Colors.red,
                                   borderRadius: BorderRadius.circular(4),
                                 ),
                               );

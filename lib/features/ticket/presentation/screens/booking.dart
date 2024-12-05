@@ -14,12 +14,32 @@ class BookingPage extends ConsumerWidget {
     final movieState = ref.watch(nowPlayingMoviesProvider);
 
     return Scaffold(
-      // extendBodyBehindAppBar: true,
-      // appBar: AppBar(
-      //   backgroundColor: Colors.transparent, // Membuat AppBar transparan
-      //   elevation: 0, // Menghilangkan bayangan
-      //   title: const Text('Transparent AppBar'),
-      // ),
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent, // Membuat AppBar transparan
+        elevation: 0, // Menghilangkan bayangan
+        actions: [
+          Container(
+            decoration: BoxDecoration(
+                color: Color(0xFF131313),
+                borderRadius: BorderRadius.circular(20)),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            margin: EdgeInsets.only(right: 16),
+            child: const Row(
+              children: [
+                Icon(Icons.location_on_outlined),
+                SizedBox(width: 8),
+                Text('Aventura 24'),
+                SizedBox(width: 8),
+                Icon(
+                  Icons.keyboard_arrow_down_rounded,
+                  color: Colors.green,
+                )
+              ],
+            ),
+          ),
+        ],
+      ),
       body: ListView(
         children: [
           // Now Playing

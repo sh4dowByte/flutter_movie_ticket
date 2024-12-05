@@ -135,7 +135,9 @@ class _AppImageSliderManualState extends State<AppImageSliderManual> {
                     const SizedBox(height: 20),
 
                     // Image content
-                    Expanded(
+                    SizedBox(
+                      width: double.infinity,
+                      height: 391,
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: CachedNetworkImage(
