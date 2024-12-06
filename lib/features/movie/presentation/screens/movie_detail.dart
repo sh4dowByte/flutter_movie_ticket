@@ -1,12 +1,19 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_movie_booking_app/features/movie/data/models/movie_detail.dart';
-import 'package:flutter_movie_booking_app/features/movie/providers/movie_detail_provider.dart';
-import 'package:flutter_movie_booking_app/widget/app_circle_button.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_svg/svg.dart';
+import 'dart:ui';
 
-import '../../../../core/pallete.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_movie_booking_app/features/movie/data/models/movie_detail.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_caster.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_detail_provider.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_recomended_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+// import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+
+import '../../../../widget/app_skeleton.dart';
+import '../widgets/app_cast_image.dart';
+import '../widgets/app_movie_card_box.dart';
 
 class MovieDetailPage extends ConsumerStatefulWidget {
   const MovieDetailPage(this.movieId, {super.key});
@@ -17,19 +24,26 @@ class MovieDetailPage extends ConsumerStatefulWidget {
 }
 
 class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
+  // late YoutubePlayerController _controller;
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(movieDetailProvider.notifier).fetchMovieDetails(widget.movieId);
+      ref
+          .read(recomendedMoviesProvider.notifier)
+          .fetchRecommendedMovies(widget.movieId, isInit: true);
     });
 
-    // Tambahkan listener untuk mendeteksi perubahan posisi scroll
-    _scrollController.addListener(() {
-      showReadme = _scrollController.position.pixels < 280;
-
-      setState(() {});
-    });
+    // _controller = YoutubePlayerController(
+    //   initialVideoId:
+    //       'tzQsSmDc8gw', // Ganti dengan ID video YouTube yang ingin Anda tampilkan
+    //   flags: YoutubePlayerFlags(
+    //     autoPlay: true,
+    //     mute: false,
+    //   ),
+    // );
   }
 
   bool showReadme = true;
@@ -39,16 +53,14 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
   @override
   void dispose() {
     _scrollController.dispose();
+    // _controller.dispose();
     super.dispose();
   }
 
-  void _scrollToBottom() {
-    // Fungsi untuk scroll ke bawah
-    _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent, // Posisi akhir
-      duration: const Duration(milliseconds: 600), // Durasi animasi
-      curve: Curves.easeInOut, // Jenis kurva animasi
-    );
+  String formatRuntime(int runtime) {
+    final hours = runtime ~/ 60; // Hitung jam
+    final minutes = runtime % 60; // Sisa menit
+    return '$hours h $minutes min';
   }
 
   @override
@@ -61,7 +73,7 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
         headerSliverBuilder: (BuildContext context, bool innnerBoxIsScrolled) {
           return <Widget>[
             SliverAppBar(
-              expandedHeight: 500.0,
+              expandedHeight: 400.0,
               floating: false,
               pinned: true,
               automaticallyImplyLeading: false,
@@ -74,40 +86,21 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        AppCircleButton(
-                            onTap: () => Navigator.pop(context),
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              color: Colors.black,
-                            )),
-                        const SizedBox(width: 15),
-                        AnimatedOpacity(
-                          opacity: innnerBoxIsScrolled ? 1.0 : 0.0,
-                          duration: const Duration(seconds: 1),
-                          curve: Curves.ease,
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width - 160,
-                            child: const Text(
-                              'Arsenal vs Aston Villa prediction',
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  fontSize: 24, fontWeight: FontWeight.bold),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    AppCircleButton(
-                      isTransparent: true,
-                      icon: SvgPicture.asset(
-                        'assets/icon/share.svg',
-                        fit: BoxFit.fitHeight,
-                        colorFilter: const ColorFilter.mode(
-                            Color(0xFFFFFFFF), BlendMode.srcIn),
-                      ),
-                    ),
+                    InkWell(
+                        onTap: () => Navigator.pop(context),
+                        child: const Icon(
+                          Icons.arrow_back_ios_new_rounded,
+                        )),
+                    // const SizedBox(width: 15),
+                    // InkWell(
+                    //     onTap: () => Navigator.popUntil(
+                    //           context,
+                    //           (route) => route
+                    //               .isFirst, // Kembali hingga halaman pertama
+                    //         ),
+                    //     child: const Icon(
+                    //       Icons.close,
+                    //     )),
                   ],
                 ),
               ),
@@ -115,9 +108,153 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
                 background: Container(
                   color: Theme.of(context).scaffoldBackgroundColor,
                   child: movieState.when(
-                    data: (value) => CachedNetworkImage(
-                      imageUrl: value.backdropUrlOriginal,
-                      fit: BoxFit.cover,
+                    data: (value) => Stack(
+                      children: [
+                        CachedNetworkImage(
+                          height: double.infinity,
+                          imageUrl: value.backdropUrlOriginal,
+                          placeholder: (context, string) {
+                            return Stack(
+                              fit: StackFit.expand,
+                              children: [
+                                CachedNetworkImage(
+                                  imageUrl: value.backdropUrlW300,
+                                  fit: BoxFit.cover,
+                                ),
+                                BackdropFilter(
+                                  filter: ImageFilter.blur(
+                                      sigmaX: 10.0, sigmaY: 10.0),
+                                  child: Container(
+                                    color: Colors.black.withOpacity(0.5),
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                          fit: BoxFit.cover,
+                        ),
+                        // Backdrop top
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                            height: 300,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter, // Awal gradien
+                                end: Alignment.topCenter, // Akhir gradien
+                                colors: [
+                                  Theme.of(context)
+                                      .scaffoldBackgroundColor
+                                      .withOpacity(1),
+                                  Theme.of(context)
+                                      .scaffoldBackgroundColor
+                                      .withOpacity(0.9),
+
+                                  Colors.transparent, // Warna akhir
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 20,
+                          left: 20,
+                          right: 20,
+                          child: Row(
+                            children: [
+                              ClipRRect(
+                                borderRadius:
+                                    BorderRadiusDirectional.circular(10),
+                                child: CachedNetworkImage(
+                                  height: 150,
+                                  width: 100,
+                                  imageUrl: value.imageUrlW300,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            value.genres
+                                                .map((e) => e.name.toString())
+                                                .join(','),
+                                            style:
+                                                const TextStyle(fontSize: 12),
+                                          ),
+                                        ),
+                                        if (value.adult) ...[
+                                          CachedNetworkImage(
+                                              width: 28,
+                                              height: 28,
+                                              imageUrl:
+                                                  'https://img.icons8.com/?size=480&id=o3iN2IEeyqAq&format=png'),
+                                        ],
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          '${DateTime.parse(value.releaseDate).year} ⦿ ${formatRuntime(value.runtime)}',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .labelSmall,
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 9),
+                                    StarRating(rating: value.voteAverage),
+                                    const SizedBox(height: 9),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        gradient: LinearGradient(
+                                          end: Alignment
+                                              .topCenter, // Awal gradien
+                                          begin: Alignment
+                                              .bottomCenter, // Akhir gradien
+                                          colors: [
+                                            Colors.white.withOpacity(0.1),
+                                            Colors.white.withOpacity(
+                                                0.1), // Warna akhir
+                                          ],
+                                        ),
+                                      ),
+                                      width: 130,
+                                      height: 34,
+                                      child: const Row(
+                                        children: [
+                                          Icon(Icons.play_arrow_rounded),
+                                          SizedBox(width: 10),
+                                          Text(
+                                            'Play Trailer',
+                                            style: TextStyle(fontSize: 12),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        // Center(
+                        //   child: YoutubePlayer(
+                        //     controller: _controller,
+                        //     showVideoProgressIndicator:
+                        //         true, // Menampilkan progress bar video
+                        //   ),
+                        // ),
+                      ],
                     ), // Data berhasil dimuat
                     loading: () => const Text(''),
                     error: (error, stackTrace) =>
@@ -137,58 +274,9 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
                       data: (data) => MovieDetailContent(movie: data),
                       error: (error, stackTrace) =>
                           Center(child: Text('Error: $error')),
-                      loading: () =>
-                          const Center(child: CircularProgressIndicator())),
+                      loading: () => MovieDetailContent.loading()),
                 );
               },
-            ),
-            AnimatedOpacity(
-              opacity: showReadme ? 1.0 : 0.0,
-              duration: const Duration(milliseconds: 200),
-              child: GestureDetector(
-                onTap: () {
-                  _scrollToBottom();
-                },
-                child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          end: Alignment.topCenter, // Awal gradien
-                          begin: Alignment.bottomCenter, // Akhir gradien
-
-                          colors: [
-                            Colors.black.withOpacity(1),
-                            Colors.black.withOpacity(0.6),
-                            Colors.transparent, // Warna akhir
-                          ],
-                        ),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 60.0, vertical: 40),
-                        child: Container(
-                          height: 56,
-                          alignment: Alignment.center,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(28),
-                            gradient: LinearGradient(
-                              colors: Pallete.gradientColor, // Warna gradien
-                              begin: Alignment.topLeft,
-                              end: Alignment.bottomRight,
-                            ),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text('Read More'),
-                              Icon(Icons.keyboard_arrow_down_rounded)
-                            ],
-                          ),
-                        ),
-                      ),
-                    )),
-              ),
             ),
           ],
         ),
@@ -197,25 +285,221 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
   }
 }
 
-class MovieDetailContent extends StatelessWidget {
+class MovieDetailContent extends ConsumerStatefulWidget {
   final MovieDetail movie;
-
   const MovieDetailContent({super.key, required this.movie});
 
   @override
-  Widget build(BuildContext context) {
+  ConsumerState<MovieDetailContent> createState() => _MovieDetailContentState();
+
+  static Widget loading() {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(movie.title, style: Theme.of(context).textTheme.displaySmall),
+          const AppSkeleton(height: 40),
           const SizedBox(height: 10),
-          Text('Release Date: ${movie.releaseDate}'),
+          const AppSkeleton(height: 40),
           const SizedBox(height: 10),
-          Text(movie.overview),
+          const AppSkeleton(
+            height: 30,
+            width: 200,
+          ),
+          const SizedBox(height: 20),
+          ...List.generate(6, (index) => index + 1).map((item) {
+            return const Column(
+              children: [
+                AppSkeleton(height: 15),
+                SizedBox(height: 5),
+              ],
+            );
+          }),
+          const SizedBox(height: 20),
+          AppCastImage.loading(),
+          const SizedBox(height: 20),
+          AppMovieCoverBox.loading()
         ],
       ),
     );
+  }
+}
+
+class _MovieDetailContentState extends ConsumerState<MovieDetailContent> {
+  final ScrollController _scrollControllerRecomended = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(movieCasterProvider.notifier).fetchMovieCaster(widget.movie.id);
+    });
+
+    _scrollControllerRecomended.addListener(() {
+      if (_scrollControllerRecomended.position.pixels >=
+          _scrollControllerRecomended.position.maxScrollExtent) {
+        ref
+            .read(recomendedMoviesProvider.notifier)
+            .fetchRecommendedMovies(widget.movie.id);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final recomendedState = ref.watch(recomendedMoviesProvider);
+    final casterState = ref.watch(movieCasterProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(widget.movie.title,
+                  style: Theme.of(context).textTheme.displaySmall),
+              const SizedBox(height: 10),
+              Text(
+                'Release Date: ${widget.movie.releaseDate}',
+                style: Theme.of(context).textTheme.labelMedium,
+              ),
+              const SizedBox(height: 10),
+              Text(widget.movie.overview),
+            ],
+          ),
+        ),
+
+        const SizedBox(height: 20),
+
+        // Caster
+        Visibility(
+          visible: casterState.value != null && casterState.value!.isNotEmpty,
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 16),
+            child: const Text('Cast'),
+          ),
+        ),
+
+        casterState.when(
+          data: (data) => SizedBox(
+            height: 130,
+            child: data.isNotEmpty
+                ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: data.length,
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      final item = data[index];
+
+                      EdgeInsets margin = EdgeInsets.only(
+                        left: index == 0 ? 11 : 4,
+                        right: index == data.length - 1 ? 11 : 4,
+                      );
+
+                      return AppCastImage(item: item, margin: margin);
+                    })
+                : Container(),
+          ),
+          loading: () => AppMovieCoverBox.loading(),
+          error: (error, stackTrace) => Center(child: Text('Error: $error')),
+        ),
+
+        const SizedBox(height: 20),
+
+        // Recomended
+        Visibility(
+          visible: recomendedState.value != null &&
+              recomendedState.value!.isNotEmpty,
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 16),
+            child: const Text('Recomended'),
+          ),
+        ),
+        recomendedState.when(
+          data: (data) => SizedBox(
+            height: 220,
+            child: ListView.builder(
+                shrinkWrap: true,
+                controller: _scrollControllerRecomended,
+                itemCount: data.length,
+                scrollDirection: Axis.horizontal,
+                itemBuilder: (context, index) {
+                  final item = data[index];
+
+                  EdgeInsets margin = EdgeInsets.only(
+                    left: index == 0 ? 20 : 4,
+                    right: index == data.length - 1 ? 20 : 4,
+                  );
+
+                  return AppMovieCoverBox(
+                    item: item,
+                    margin: margin,
+                    replaceRoute: true,
+                  );
+                }),
+          ),
+          loading: () => AppMovieCoverBox.loading(),
+          error: (error, stackTrace) => Center(child: Text('Error: $error')),
+        ),
+
+        const SizedBox(height: 40),
+      ],
+    );
+  }
+}
+
+class StarRating extends StatelessWidget {
+  final double rating; // Nilai rating (misalnya 7.5 dari 10)
+  final int maxRange; // Total range nilai (default: 10)
+  final int maxStars; // Jumlah maksimal bintang yang ditampilkan
+  final Color starColor; // Warna bintang
+  final double starSize; // Ukuran bintang
+
+  const StarRating({
+    super.key,
+    required this.rating,
+    this.maxRange = 10,
+    this.maxStars = 5,
+    this.starColor = Colors.amber,
+    this.starSize = 20.0,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Konversi rating dari range ke jumlah bintang
+    final double starRating = (rating / maxRange) * maxStars;
+
+    return Row(mainAxisSize: MainAxisSize.min, children: [
+      Text(
+        rating.toString(),
+        style: TextStyle(color: starColor),
+      ),
+      const SizedBox(width: 10),
+      ...List.generate(maxStars, (index) {
+        if (index < starRating.floor()) {
+          return Icon(
+            Icons.star,
+            color: starColor,
+            size: starSize,
+          );
+        } else if (index < starRating) {
+          return Icon(
+            Icons.star_half,
+            color: starColor,
+            size: starSize,
+          );
+        } else {
+          return Icon(
+            Icons.star_border,
+            color: starColor,
+            size: starSize,
+          );
+        }
+      }),
+    ]);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:flutter_movie_booking_app/features/movie/data/models/cast.dart';
 import 'package:flutter_movie_booking_app/features/movie/data/models/genres.dart';
 import 'package:flutter_movie_booking_app/features/movie/data/models/movie_detail.dart';
 import '../models/movie.dart';
@@ -50,12 +51,13 @@ class MovieService {
     }
   }
 
-  Future<List<Movie>> fetchRecommendedMovies(int movieId) async {
+  Future<List<Movie>> fetchRecommendedMovies(movieId, {int page = 1}) async {
     try {
       final response = await _dio.get(
         '/3/movie/$movieId/recommendations',
         queryParameters: {
           'language': 'en-US',
+          'page': page,
         },
       );
 
@@ -83,6 +85,26 @@ class MovieService {
         return MovieDetail.fromJson(response.data);
       } else {
         throw Exception('Failed to fetch recommended movies');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<List<Cast>> fetchMovieCaster(int movieId) async {
+    try {
+      final response = await _dio.get(
+        '/3/movie/$movieId/credits',
+        queryParameters: {
+          'language': 'en-US',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final List cast = response.data['cast'];
+        return cast.map((movie) => Cast.fromJson(movie)).toList();
+      } else {
+        throw Exception('Failed to fetch caster');
       }
     } catch (e) {
       throw Exception('Error: $e');

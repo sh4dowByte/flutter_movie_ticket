@@ -1,11 +1,13 @@
 import 'dart:async';
+import 'dart:ui';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_booking_app/features/movie/data/models/movie.dart';
 import 'package:flutter_movie_booking_app/widget/app_skeleton.dart';
 
 class AppImageSlider extends StatefulWidget {
-  final List<Map<String, dynamic>> data;
-  const AppImageSlider({super.key, required this.data});
+  final List<Movie> movie;
+  const AppImageSlider({super.key, required this.movie});
 
   @override
   State<AppImageSlider> createState() => _AppImageSliderState();
@@ -52,7 +54,7 @@ class _AppImageSliderState extends State<AppImageSlider>
     setState(() {
       if (_animationController.isCompleted) {
         // Pindah ke halaman berikutnya ketika progress selesai
-        if (_currentIndex < widget.data.length - 1) {
+        if (_currentIndex < widget.movie.length - 1) {
           _currentIndex++;
         } else {
           _currentIndex = 0;
@@ -74,7 +76,7 @@ class _AppImageSliderState extends State<AppImageSlider>
       children: [
         PageView.builder(
           controller: _pageController,
-          itemCount: widget.data.length,
+          itemCount: widget.movie.length,
           onPageChanged: (index) {
             setState(() {
               _currentIndex = index;
@@ -87,9 +89,27 @@ class _AppImageSliderState extends State<AppImageSlider>
               children: [
                 Positioned.fill(
                   child: CachedNetworkImage(
-                    imageUrl: widget.data[index]['image'],
+                    imageUrl: widget.movie[index].backdropUrlOriginal,
                     fit: BoxFit
                         .cover, // Gambar akan memenuhi area tanpa mengubah proporsi
+                    placeholder: (context, url) {
+                      return Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          CachedNetworkImage(
+                            imageUrl: widget.movie[index].backdropUrlW300,
+                            fit: BoxFit.cover,
+                          ),
+                          BackdropFilter(
+                            filter:
+                                ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
+                            child: Container(
+                              color: Colors.black.withOpacity(0.5),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 ),
 
@@ -103,7 +123,7 @@ class _AppImageSliderState extends State<AppImageSlider>
                           _currentIndex--;
 
                           if (_currentIndex < 0) {
-                            _currentIndex = widget.data.length - 1;
+                            _currentIndex = widget.movie.length - 1;
                           }
 
                           _pageController.animateToPage(
@@ -123,7 +143,7 @@ class _AppImageSliderState extends State<AppImageSlider>
                     InkWell(
                       onTap: () {
                         setState(() {
-                          if (_currentIndex < widget.data.length - 1) {
+                          if (_currentIndex < widget.movie.length - 1) {
                             _currentIndex++;
                           } else {
                             _currentIndex = 0;
@@ -181,7 +201,7 @@ class _AppImageSliderState extends State<AppImageSlider>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.data[_currentIndex]['title'],
+                            widget.movie[_currentIndex].title,
                             style: const TextStyle(fontSize: 20),
                           ),
                           const SizedBox(height: 10),
@@ -258,11 +278,11 @@ class _AppImageSliderState extends State<AppImageSlider>
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: List.generate(
-                widget.data.length,
+                widget.movie.length,
                 (index) {
                   final screenWidth = MediaQuery.of(context).size.width;
                   final maxWidth =
-                      screenWidth / widget.data.length - 10; // Proporsional
+                      screenWidth / widget.movie.length - 10; // Proporsional
                   const double activeWidth = 41; // Batas panjang aktif
                   final double inactiveWidth =
                       maxWidth > 16 ? 16 : maxWidth / 2; // Panjang nonaktif

@@ -21,10 +21,10 @@ class BookingPage extends ConsumerWidget {
         actions: [
           Container(
             decoration: BoxDecoration(
-                color: Color(0xFF131313),
+                color: const Color(0xFF131313),
                 borderRadius: BorderRadius.circular(20)),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            margin: EdgeInsets.only(right: 16),
+            margin: const EdgeInsets.only(right: 16),
             child: const Row(
               children: [
                 Icon(Icons.location_on_outlined),

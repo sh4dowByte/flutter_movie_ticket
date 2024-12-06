@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_movie_booking_app/features/movie/data/models/movie.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/genres_provider.dart';
 import 'package:flutter_movie_booking_app/features/movie/presentation/widgets/app_movie_card_box.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_discover_provider.dart';
@@ -69,13 +68,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             data: (data) => SizedBox(
               height: 362,
               child: AppImageSlider(
-                data: data
-                    .map((movie) => {
-                          'title': movie.title,
-                          'image': movie.backdropUrlOriginal
-                        })
-                    .take(14)
-                    .toList(),
+                movie: data.take(14).toList(),
               ),
             ),
           ),
@@ -171,15 +164,13 @@ class _HomePageState extends ConsumerState<HomePage> {
           const SizedBox(height: 23),
 
           // Popular
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12).copyWith(bottom: 16),
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [Text('Popular Movies'), Text('See More')],
             ),
-          ),
-          const SizedBox(
-            height: 16,
           ),
 
           movieStatePopular.when(

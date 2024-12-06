@@ -149,7 +149,7 @@ class AppTicketCard extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Auditorium',
+                                      'AUDITORIUM',
                                       style: TextStyle(
                                           color: Colors.white60, fontSize: 11),
                                     ),
@@ -166,7 +166,7 @@ class AppTicketCard extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Row',
+                                      'ROW',
                                       style: TextStyle(
                                           color: Colors.white60, fontSize: 11),
                                     ),
@@ -183,7 +183,7 @@ class AppTicketCard extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      'Seat',
+                                      'SEAT',
                                       style: TextStyle(
                                           color: Colors.white60, fontSize: 11),
                                     ),
@@ -208,7 +208,7 @@ class AppTicketCard extends StatelessWidget {
                                   const EdgeInsets.symmetric(horizontal: 20),
                               height: 40,
                               decoration: BoxDecoration(
-                                color: Colors.white.withOpacity(0.4),
+                                color: Colors.black.withOpacity(0.4),
                                 borderRadius: BorderRadius.circular(40),
                               ),
                               child: const Row(

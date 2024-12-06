@@ -9,23 +9,36 @@ class AppMovieCoverBox extends StatelessWidget {
     super.key,
     required this.item,
     required this.margin,
+    this.replaceRoute = false,
   });
 
   final Movie item;
   final EdgeInsets margin;
+  final bool replaceRoute;
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () =>
-          Navigator.pushNamed(context, Routes.movieDetail, arguments: item.id),
+      hoverColor: Colors.transparent,
+      onTap: () {
+        if (replaceRoute) {
+          Navigator.pushReplacementNamed(context, Routes.movieDetail,
+              arguments: item.id);
+        } else {
+          Navigator.pushNamed(context, Routes.movieDetail, arguments: item.id);
+        }
+      },
       child: Container(
         margin: margin,
         width: 162,
         child: ClipRRect(
           borderRadius: BorderRadius.circular(13),
           child: CachedNetworkImage(
-            imageUrl: item.imageUrlW300,
+            imageUrl: item.imageUrlOriginal,
+            placeholder: (context, url) => CachedNetworkImage(
+              imageUrl: item.imageUrlW300, // Gambar thumbnail (ukuran kecil)
+              fit: BoxFit.cover,
+            ),
             fit: BoxFit.cover,
           ),
         ),
