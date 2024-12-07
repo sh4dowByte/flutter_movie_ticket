@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_booking_app/features/ticket/presentation/screens/screens.dart';
 
 import '../features/movie/presentation/screens/screens.dart';
 import '../screens/menu.dart';
@@ -8,6 +9,7 @@ class Routes {
   static const String movieDetail = '/movie_detail';
   static const String movieSearch = '/movie_search';
   static const String seeMore = '/see_more';
+  static const String seats = '/seats';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -20,6 +22,9 @@ class Routes {
 
       case movieSearch:
         return MaterialPageRoute(builder: (_) => const MovieSearchPage());
+
+      case seats:
+        return MaterialPageRoute(builder: (_) => const SeatsPage());
 
       case seeMore:
         final args = settings.arguments as Map<String, dynamic>;

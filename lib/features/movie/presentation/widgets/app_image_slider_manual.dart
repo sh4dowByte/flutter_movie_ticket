@@ -2,10 +2,12 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_booking_app/features/movie/data/models/movie.dart';
 
 class AppImageSliderManual extends StatefulWidget {
-  final List<Map<String, dynamic>> data;
-  const AppImageSliderManual({super.key, required this.data});
+  final List<Movie> data;
+  final Function(Movie)? onChange;
+  const AppImageSliderManual({super.key, required this.data, this.onChange});
 
   @override
   State<AppImageSliderManual> createState() => _AppImageSliderManualState();
@@ -21,6 +23,13 @@ class _AppImageSliderManualState extends State<AppImageSliderManual> {
     _pageController.addListener(() {
       setState(() {
         _currentPage = _pageController.page ?? 0;
+
+        // Cek jika _currentPage adalah integer (misalnya 1.0, 2.0)
+        if (_currentPage == _currentPage.toInt()) {
+          if (widget.onChange != null) {
+            widget.onChange!(widget.data[_currentPage.toInt()]);
+          }
+        }
       });
     });
   }
@@ -40,7 +49,7 @@ class _AppImageSliderManualState extends State<AppImageSliderManual> {
         if (widget.data.isNotEmpty) ...[
           Positioned.fill(
             child: CachedNetworkImage(
-              imageUrl: widget.data[_currentPage.toInt()]['image']!,
+              imageUrl: widget.data[_currentPage.toInt()].backdropUrlW300,
               fit: BoxFit.cover,
               placeholder: (context, url) => const Center(
                 child: CircularProgressIndicator(),
@@ -102,7 +111,7 @@ class _AppImageSliderManualState extends State<AppImageSliderManual> {
                   children: [
                     // Title
                     Text(
-                      widget.data[index]['title'],
+                      widget.data[index].title,
                       style: const TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -141,7 +150,7 @@ class _AppImageSliderManualState extends State<AppImageSliderManual> {
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
                         child: CachedNetworkImage(
-                          imageUrl: widget.data[index]['image'],
+                          imageUrl: widget.data[index].imageUrlW500,
                           fit: BoxFit.cover,
                         ),
                       ),

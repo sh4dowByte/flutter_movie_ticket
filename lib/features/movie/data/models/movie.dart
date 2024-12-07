@@ -30,8 +30,9 @@ class Movie with _$Movie {
 // Ekstensi untuk menambahkan getter imageUrl
 extension MovieImageUrl on Movie {
   String _getImageUrl(String size, {bool isBackdrop = false}) {
-    return posterPath != null
-        ? 'https://image.tmdb.org/t/p/$size${isBackdrop ? backdropPath : posterPath}'
+    final path = isBackdrop ? backdropPath : posterPath;
+    return path != null
+        ? 'https://image.tmdb.org/t/p/$size$path'
         : 'https://img.icons8.com/?size=480&id=gX6VczTLnV3E&format=png';
   }
 

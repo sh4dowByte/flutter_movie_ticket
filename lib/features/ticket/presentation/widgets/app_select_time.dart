@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class AppSelectTime extends StatefulWidget {
   final List<String> item;
-  const AppSelectTime({super.key, required this.item});
+  final Function(String)? onChange;
+  const AppSelectTime({super.key, required this.item, this.onChange});
 
   @override
   State<AppSelectTime> createState() => _AppSelectTimeState();
@@ -14,6 +15,10 @@ class _AppSelectTimeState extends State<AppSelectTime> {
   void toggleItemById(String id) {
     setState(() {
       activeIds = id;
+
+      if (widget.onChange != null) {
+        widget.onChange!(activeIds);
+      }
     });
   }
 

@@ -18,9 +18,9 @@ class _MenuPageState extends State<MenuPage> {
   // Daftar halaman yang akan ditampilkan sesuai tab yang dipilih
   final List<Widget> _pages = [
     const Center(child: HomePage()),
-    const Center(child: SeatsPage()),
     const Center(child: BookingPage()),
     const Center(child: TicketPage()),
+    const Center(child: Text('Profile')),
   ];
 
   void _onTabTapped(int index) {
@@ -61,8 +61,8 @@ class _MenuPageState extends State<MenuPage> {
             type: BottomNavigationBarType.fixed,
             items: [
               _buildNavItem('home', 0),
-              _buildNavItem('search', 1),
-              _buildNavItem('grid', 2),
+              _buildNavItem('play', 1),
+              _buildNavItem('ticket', 2),
               _buildNavItem('profile', 3),
             ],
             selectedItemColor:

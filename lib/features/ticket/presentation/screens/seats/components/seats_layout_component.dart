@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../../../../widget/widget.dart';
 
 class SeatLayoutComponent extends StatefulWidget {
-  const SeatLayoutComponent({super.key});
+  final Function(List<String>)? onSelected;
+  const SeatLayoutComponent({super.key, this.onSelected});
 
   @override
   State<SeatLayoutComponent> createState() => _SeatLayoutComponentState();
@@ -107,6 +108,10 @@ class _SeatLayoutComponentState extends State<SeatLayoutComponent> {
                               _selectedSeats.remove(seat);
                             } else {
                               _selectedSeats.add(seat);
+                            }
+
+                            if (widget.onSelected != null) {
+                              widget.onSelected!(_selectedSeats);
                             }
                           });
                         },

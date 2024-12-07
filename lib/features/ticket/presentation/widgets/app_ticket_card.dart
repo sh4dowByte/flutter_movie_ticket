@@ -3,12 +3,11 @@ import 'dart:ui';
 import 'package:barcode/barcode.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_booking_app/features/ticket/data/models/ticket.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-import '../../../movie/data/models/movie.dart';
-
 class AppTicketCard extends StatelessWidget {
-  final Movie data;
+  final Ticket data;
   const AppTicketCard({
     super.key,
     required this.data,
@@ -26,7 +25,7 @@ class AppTicketCard extends StatelessWidget {
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
               child: CachedNetworkImage(
-                imageUrl: data.imageUrlW300,
+                imageUrl: data.backdropUrlW300,
                 fit: BoxFit.fill,
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
@@ -45,9 +44,9 @@ class AppTicketCard extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Scotiabank Theatre Ottawa',
-                          style: TextStyle(fontSize: 12),
+                        Text(
+                          data.location,
+                          style: const TextStyle(fontSize: 12),
                         ),
                         Row(
                           children: [
@@ -95,7 +94,7 @@ class AppTicketCard extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Text(
-                                data.title,
+                                data.movieName,
                                 style: const TextStyle(fontSize: 22),
                               ),
                             ),
@@ -115,16 +114,16 @@ class AppTicketCard extends StatelessWidget {
                         const SizedBox(height: 10),
 
                         // date
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text('Tue, Jul 30'),
-                            Text('07.00 PM'),
+                            Text(data.formattedDate),
+                            Text(data.time12),
                             Row(
                               children: [
-                                Icon(Icons.timer_outlined, size: 15),
-                                SizedBox(width: 5),
-                                Text('2h 24min'),
+                                const Icon(Icons.timer_outlined, size: 15),
+                                const SizedBox(width: 5),
+                                Text(data.durationHour),
                               ],
                             ),
                           ],
@@ -140,7 +139,7 @@ class AppTicketCard extends StatelessWidget {
                             color: Colors.black.withOpacity(0.5),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
@@ -148,14 +147,14 @@ class AppTicketCard extends StatelessWidget {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
+                                    const Text(
                                       'AUDITORIUM',
                                       style: TextStyle(
                                           color: Colors.white60, fontSize: 11),
                                     ),
                                     Text(
-                                      '07',
-                                      style: TextStyle(fontSize: 18),
+                                      data.roomNumber,
+                                      style: const TextStyle(fontSize: 18),
                                     ),
                                   ],
                                 ),
@@ -165,14 +164,14 @@ class AppTicketCard extends StatelessWidget {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
+                                    const Text(
                                       'ROW',
                                       style: TextStyle(
                                           color: Colors.white60, fontSize: 11),
                                     ),
                                     Text(
-                                      'J',
-                                      style: TextStyle(fontSize: 18),
+                                      data.seatLetter,
+                                      style: const TextStyle(fontSize: 18),
                                     ),
                                   ],
                                 ),
@@ -182,14 +181,14 @@ class AppTicketCard extends StatelessWidget {
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(
+                                    const Text(
                                       'SEAT',
                                       style: TextStyle(
                                           color: Colors.white60, fontSize: 11),
                                     ),
                                     Text(
-                                      '15',
-                                      style: TextStyle(fontSize: 18),
+                                      data.seatNumber,
+                                      style: const TextStyle(fontSize: 18),
                                     ),
                                   ],
                                 ),
@@ -237,14 +236,15 @@ class AppTicketCard extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    const Text(
-                      'CPX TUESDAY',
-                      style: TextStyle(
+                    Text(
+                      'CPX ${data.getDayFromDate.toUpperCase()}',
+                      style: const TextStyle(
                           color: Colors.black, fontWeight: FontWeight.bold),
                     ),
-                    generateBarcode('T7404646288750988'),
-                    const Text('T7404646288750988',
-                        style: TextStyle(color: Colors.black, fontSize: 10)),
+                    generateBarcode(data.trxId),
+                    Text(data.trxId,
+                        style:
+                            const TextStyle(color: Colors.black, fontSize: 10)),
                   ],
                 ),
               )
