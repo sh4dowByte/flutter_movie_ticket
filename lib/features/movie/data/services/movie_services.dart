@@ -6,15 +6,22 @@ import 'package:flutter_movie_booking_app/features/movie/data/models/movie_detai
 import '../models/movie.dart';
 
 class MovieService {
-  final Dio _dio = Dio(
-    BaseOptions(
-      baseUrl: dotenv.env['TMDB_API_BASE_URL']!,
-      headers: {
-        'Authorization': 'Bearer ${dotenv.env['TMDB_ACCESS_TOKEN']}',
-        'Content-Type': 'application/json;charset=utf-8',
-      },
-    ),
-  );
+  Dio _dio;
+
+  set dio(Dio dioInstance) {
+    _dio = dioInstance;
+  }
+
+  MovieService()
+      : _dio = Dio(
+          BaseOptions(
+            baseUrl: dotenv.env['TMDB_API_BASE_URL']!,
+            headers: {
+              'Authorization': 'Bearer ${dotenv.env['TMDB_ACCESS_TOKEN']}',
+              'Content-Type': 'application/json;charset=utf-8',
+            },
+          ),
+        );
 
   Future<List<Movie>> fetchPopularMovies(int page) async {
     try {

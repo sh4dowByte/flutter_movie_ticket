@@ -1,3 +1,4 @@
+import 'package:flutter_movie_booking_app/core/exceptions/empty_data_exception.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/models/movie.dart';
 import '../data/services/movie_services.dart';
@@ -30,17 +31,27 @@ class SearchMoviesNotifier extends StateNotifier<AsyncValue<List<Movie>>> {
     try {
       final newMovies =
           await _movieService.searchMovies(keyword, page: _currentPage);
-      _currentPage++;
 
+      if (newMovies.isEmpty && _currentPage == 1) {
+        throw EmptyDataException('No movies found for "$keyword".');
+      }
+
+      _currentPage++;
       state = AsyncValue.data([
-        ...(state.value ??
-            []), // Menggabungkan data sebelumnya dengan data baru
+        ...(state.value ?? []),
         ...newMovies,
       ]);
+    } on EmptyDataException catch (e, s) {
+      state = AsyncValue.error(e, s);
     } catch (e, s) {
       state = AsyncValue.error(e, s);
     } finally {
       _isFetching = false;
     }
+  }
+
+  Future<void> resetSearch() async {
+    state = const AsyncValue.error('Type to search', StackTrace.empty);
+    // state = const AsyncValue.loading(); // Reset loading state
   }
 }

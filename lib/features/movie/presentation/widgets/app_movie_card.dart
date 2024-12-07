@@ -176,8 +176,27 @@ class AppMovieCoverTile extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 8.0),
             child: Padding(
               padding: EdgeInsets.all(8.0),
-              child: AppSkeleton(
-                height: 162,
+              child: Row(
+                children: [
+                  AppSkeleton(
+                    height: 162,
+                    width: 110,
+                  ),
+                  SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        AppSkeleton(
+                          height: 30,
+                        ),
+                        SizedBox(height: 10),
+                        AppSkeleton(
+                          height: 80,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
           );

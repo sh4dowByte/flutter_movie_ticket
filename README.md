@@ -1,4 +1,4 @@
-![1732349085635](image/README/Thumbnail.png)
+![1733615477380](image/README/1733615477380.png)
 
 <p align="center">
     <img src="https://github.com/sh4dowByte/flutter_ui_dribbox_online_cloud_storage/actions/workflows/main.yaml/badge.svg?branch=release" alt="CI/CD Badge" style="max-width: 100%;">

@@ -193,7 +193,7 @@ class ChoseLocationComponent extends StatelessWidget {
                     children: [
                       Text(location),
                       Text(
-                        'Banjarbaru, 36 Km',
+                        'Citimall, 5 Km',
                         style: Theme.of(context).textTheme.labelSmall,
                       ),
                     ],

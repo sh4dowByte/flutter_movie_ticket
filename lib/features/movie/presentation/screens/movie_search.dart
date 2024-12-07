@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_booking_app/features/movie/presentation/widgets/app_movie_card.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_search_provider.dart';
+import 'package:flutter_movie_booking_app/widget/app_error.dart';
 import 'package:flutter_movie_booking_app/widget/app_text_search.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,7 +19,10 @@ class MovieSearchPageState extends ConsumerState<MovieSearchPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(searchMoviesProvider.notifier).resetSearch();
+    });
+
     _scrollControllerSearch.addListener(() {
       if (_scrollControllerSearch.position.pixels >=
           _scrollControllerSearch.position.maxScrollExtent) {
@@ -48,18 +52,23 @@ class MovieSearchPageState extends ConsumerState<MovieSearchPage> {
         },
       )),
       body: searchMovieState.when(
-        data: (data) => SizedBox(
-          child: ListView.builder(
-              shrinkWrap: true,
-              controller: _scrollControllerSearch,
-              itemCount: data.length,
-              itemBuilder: (context, index) {
-                final item = data[index];
-                return AppMovieCoverTile(item: item);
-              }),
-        ),
+        data: (data) {
+          return SizedBox(
+            child: ListView.builder(
+                shrinkWrap: true,
+                controller: _scrollControllerSearch,
+                itemCount: data.length,
+                itemBuilder: (context, index) {
+                  final item = data[index];
+                  return AppMovieCoverTile(item: item);
+                }),
+          );
+        },
         loading: () => AppMovieCoverTile.loading(),
-        error: (error, stackTrace) => Center(child: Text('Error: $error')),
+        error: (error, stackTrace) => AppError(
+          error,
+          stackTrace: stackTrace,
+        ),
       ),
     );
   }

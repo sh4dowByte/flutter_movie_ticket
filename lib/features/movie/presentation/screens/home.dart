@@ -169,7 +169,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                         'genreId': genreId,
                         'providerKey': 'discover'
                       }),
-                  child: const Text('See More'),
+                  child: Text(
+                    'See More',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 )
               ],
             ),
@@ -217,7 +220,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                         'title': 'Popular Movies',
                         'providerKey': 'popular'
                       }),
-                  child: const Text('See More'),
+                  child: Text(
+                    'See More',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 )
               ],
             ),
@@ -262,7 +268,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                         'title': 'Top Rated Movies',
                         'providerKey': 'top_rated'
                       }),
-                  child: const Text('See More'),
+                  child: Text(
+                    'See More',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 )
               ],
             ),
@@ -307,7 +316,10 @@ class _HomePageState extends ConsumerState<HomePage> {
                         'title': 'Upcoming Movies',
                         'providerKey': 'upcoming'
                       }),
-                  child: const Text('See More'),
+                  child: Text(
+                    'See More',
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
                 )
               ],
             ),

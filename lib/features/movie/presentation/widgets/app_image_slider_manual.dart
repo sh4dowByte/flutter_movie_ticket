@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_movie_booking_app/features/movie/data/models/movie.dart';
 
 class AppImageSliderManual extends StatefulWidget {
@@ -15,26 +16,27 @@ class AppImageSliderManual extends StatefulWidget {
 
 class _AppImageSliderManualState extends State<AppImageSliderManual> {
   final PageController _pageController = PageController(viewportFraction: 0.6);
-  double _currentPage = 0;
+  int _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
-    // if (widget.onChange != null) {
-    //   widget.onChange!(widget.data[0]);
-    // }
     _pageController.addListener(() {
-      print('LISEN');
-      setState(() {
-        _currentPage = _pageController.page ?? 0;
+      final direction = _pageController.position.userScrollDirection;
 
-        // Cek jika _currentPage adalah integer (misalnya 1.0, 2.0)
-        if (_currentPage == _currentPage.toInt()) {
-          if (widget.onChange != null) {
-            widget.onChange!(widget.data[_currentPage.toInt()]);
+      if (direction != ScrollDirection.idle) {
+        setState(() {
+          // Periksa apakah page sudah sepenuhnya diubah
+          int newPage = _pageController.page?.round() ?? _currentPage;
+          if (newPage != _currentPage) {
+            _currentPage = newPage;
+
+            if (widget.onChange != null) {
+              widget.onChange!(widget.data[_currentPage]);
+            }
           }
-        }
-      });
+        });
+      }
     });
   }
 
