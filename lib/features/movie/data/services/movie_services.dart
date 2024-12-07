@@ -34,6 +34,42 @@ class MovieService {
     }
   }
 
+  Future<List<Movie>> fetchTopRatedMovies(int page) async {
+    try {
+      final response = await _dio.get('/3/movie/top_rated', queryParameters: {
+        'language': 'en-US',
+        'page': page,
+      });
+
+      if (response.statusCode == 200) {
+        final List movies = response.data['results'];
+        return movies.map((movie) => Movie.fromJson(movie)).toList();
+      } else {
+        throw Exception('Failed to fetch top rated movies');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
+  Future<List<Movie>> fetchUpcomingMovies(int page) async {
+    try {
+      final response = await _dio.get('/3/movie/upcoming', queryParameters: {
+        'language': 'en-US',
+        'page': page,
+      });
+
+      if (response.statusCode == 200) {
+        final List movies = response.data['results'];
+        return movies.map((movie) => Movie.fromJson(movie)).toList();
+      } else {
+        throw Exception('Failed to fetch upcoming movies');
+      }
+    } catch (e) {
+      throw Exception('Error: $e');
+    }
+  }
+
   Future<List<Movie>> searchMovies(String keyword, {int page = 1}) async {
     try {
       final response = await _dio.get('/3/search/movie', queryParameters: {

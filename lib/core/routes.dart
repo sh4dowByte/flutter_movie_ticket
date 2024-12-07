@@ -7,6 +7,7 @@ class Routes {
   static const String menu = '/menu';
   static const String movieDetail = '/movie_detail';
   static const String movieSearch = '/movie_search';
+  static const String seeMore = '/see_more';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -19,6 +20,18 @@ class Routes {
 
       case movieSearch:
         return MaterialPageRoute(builder: (_) => const MovieSearchPage());
+
+      case seeMore:
+        final args = settings.arguments as Map<String, dynamic>;
+        final genreId = args['genreId'];
+        final title = args['title'];
+        final provider = args['providerKey'];
+        return MaterialPageRoute(
+            builder: (_) => SeeMorePage(
+                  title,
+                  provider,
+                  genreId: genreId,
+                ));
 
       case '/':
       default:

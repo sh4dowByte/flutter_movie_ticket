@@ -4,6 +4,8 @@ import 'package:flutter_movie_booking_app/features/movie/presentation/widgets/ap
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_discover_provider.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_now_playing.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_popular_provider.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_top_rated_provider.dart';
+import 'package:flutter_movie_booking_app/features/movie/providers/movie_upcoming_provider.dart';
 import 'package:flutter_movie_booking_app/widget/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,6 +21,8 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   final ScrollController _scrollControllerDiscover = ScrollController();
   final ScrollController _scrollControllerPopular = ScrollController();
+  final ScrollController _scrollControllerTopRated = ScrollController();
+  final ScrollController _scrollControllerUpcoming = ScrollController();
   int genreId = 0;
 
   @override
@@ -26,9 +30,11 @@ class _HomePageState extends ConsumerState<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       ref.read(nowPlayingMoviesProvider.notifier).fetchNowPlayingMovies();
-      ref.read(popularMoviesProvider.notifier).fetchPopularMovies();
       ref.read(genresProvider.notifier).fetchGenres();
       ref.read(discoverMoviesProvider.notifier).fetchDiscoverMovies(genreId);
+      ref.read(popularMoviesProvider.notifier).fetchPopularMovies();
+      ref.read(topRatedMoviesProvider.notifier).fetchTopRatedMovies();
+      ref.read(upcomingMoviesProvider.notifier).fetchUpcomingMovies();
     });
 
     _scrollControllerDiscover.addListener(() {
@@ -42,6 +48,20 @@ class _HomePageState extends ConsumerState<HomePage> {
       if (_scrollControllerPopular.position.pixels >=
           _scrollControllerPopular.position.maxScrollExtent) {
         ref.read(popularMoviesProvider.notifier).fetchPopularMovies();
+      }
+    });
+
+    _scrollControllerTopRated.addListener(() {
+      if (_scrollControllerTopRated.position.pixels >=
+          _scrollControllerTopRated.position.maxScrollExtent) {
+        ref.read(topRatedMoviesProvider.notifier).fetchTopRatedMovies();
+      }
+    });
+
+    _scrollControllerUpcoming.addListener(() {
+      if (_scrollControllerUpcoming.position.pixels >=
+          _scrollControllerUpcoming.position.maxScrollExtent) {
+        ref.read(upcomingMoviesProvider.notifier).fetchUpcomingMovies();
       }
     });
   }
@@ -59,6 +79,8 @@ class _HomePageState extends ConsumerState<HomePage> {
     final movieStatePopular = ref.watch(popularMoviesProvider);
     final genresState = ref.watch(genresProvider);
     final discoverMovieState = ref.watch(discoverMoviesProvider);
+    final topRatedMovieState = ref.watch(topRatedMoviesProvider);
+    final upcomingMovieState = ref.watch(upcomingMoviesProvider);
 
     return Scaffold(
       body: ListView(
@@ -134,11 +156,22 @@ class _HomePageState extends ConsumerState<HomePage> {
           const SizedBox(height: 23),
 
           // Discover
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text('Discover'), Text('See More')],
+              children: [
+                const Text('Discover'),
+                InkWell(
+                  onTap: () => Navigator.pushNamed(context, Routes.seeMore,
+                      arguments: {
+                        'title': 'Discover',
+                        'genreId': genreId,
+                        'providerKey': 'discover'
+                      }),
+                  child: const Text('See More'),
+                )
+              ],
             ),
           ),
           const SizedBox(
@@ -174,9 +207,19 @@ class _HomePageState extends ConsumerState<HomePage> {
           Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 12).copyWith(bottom: 16),
-            child: const Row(
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text('Popular Movies'), Text('See More')],
+              children: [
+                const Text('Popular Movies'),
+                InkWell(
+                  onTap: () => Navigator.pushNamed(context, Routes.seeMore,
+                      arguments: {
+                        'title': 'Popular Movies',
+                        'providerKey': 'popular'
+                      }),
+                  child: const Text('See More'),
+                )
+              ],
             ),
           ),
 
@@ -186,6 +229,96 @@ class _HomePageState extends ConsumerState<HomePage> {
               child: ListView.builder(
                   shrinkWrap: true,
                   controller: _scrollControllerPopular,
+                  itemCount: data.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final item = data[index];
+
+                    EdgeInsets margin = EdgeInsets.only(
+                      left: index == 0 ? 11 : 4,
+                      right: index == data.length - 1 ? 11 : 4,
+                    );
+
+                    return AppMovieCoverBox(item: item, margin: margin);
+                  }),
+            ),
+            loading: () => AppMovieCoverBox.loading(),
+            error: (error, stackTrace) => Center(child: Text('Error: $error')),
+          ),
+
+          const SizedBox(height: 23),
+
+          // Top Rated
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12).copyWith(bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Top Rated Movies'),
+                InkWell(
+                  onTap: () => Navigator.pushNamed(context, Routes.seeMore,
+                      arguments: {
+                        'title': 'Top Rated Movies',
+                        'providerKey': 'top_rated'
+                      }),
+                  child: const Text('See More'),
+                )
+              ],
+            ),
+          ),
+
+          topRatedMovieState.when(
+            data: (data) => SizedBox(
+              height: 220,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: _scrollControllerTopRated,
+                  itemCount: data.length,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    final item = data[index];
+
+                    EdgeInsets margin = EdgeInsets.only(
+                      left: index == 0 ? 11 : 4,
+                      right: index == data.length - 1 ? 11 : 4,
+                    );
+
+                    return AppMovieCoverBox(item: item, margin: margin);
+                  }),
+            ),
+            loading: () => AppMovieCoverBox.loading(),
+            error: (error, stackTrace) => Center(child: Text('Error: $error')),
+          ),
+
+          const SizedBox(height: 23),
+
+          // Upcoming
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 12).copyWith(bottom: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('Upcoming Movies'),
+                InkWell(
+                  onTap: () => Navigator.pushNamed(context, Routes.seeMore,
+                      arguments: {
+                        'title': 'Upcoming Movies',
+                        'providerKey': 'upcoming'
+                      }),
+                  child: const Text('See More'),
+                )
+              ],
+            ),
+          ),
+
+          upcomingMovieState.when(
+            data: (data) => SizedBox(
+              height: 220,
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  controller: _scrollControllerUpcoming,
                   itemCount: data.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) {

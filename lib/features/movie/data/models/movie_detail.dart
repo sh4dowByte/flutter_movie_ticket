@@ -44,39 +44,19 @@ class MovieDetail with _$MovieDetail {
 }
 
 extension MovieImageUrl on MovieDetail {
-  // Getter untuk gambar ukuran besar (original)
-  // String get imageUrlOriginal =>
-  //     'https://image.tmdb.org/t/p/original$posterPath';
+  String _getImageUrl(String size, {bool isBackdrop = false}) {
+    return posterPath != null
+        ? 'https://image.tmdb.org/t/p/$size${isBackdrop ? backdropPath : posterPath}'
+        : 'https://img.icons8.com/?size=480&id=gX6VczTLnV3E&format=png';
+  }
 
-  // // Getter untuk gambar ukuran 500px
-  // String get imageUrlW500 => 'https://image.tmdb.org/t/p/w500$posterPath';
-
-  // // Getter untuk gambar ukuran 300px
-  // String get imageUrlW300 => 'https://image.tmdb.org/t/p/w300$posterPath';
-
-  String get backdropUrlOriginal => posterPath != null
-      ? 'https://image.tmdb.org/t/p/original${backdropPath ?? posterPath}'
-      : 'https://img.icons8.com/?size=480&id=gX6VczTLnV3E&format=png';
-
-  String get backdropUrlW500 => posterPath != null
-      ? 'https://image.tmdb.org/t/p/w500${backdropPath ?? posterPath}'
-      : 'https://img.icons8.com/?size=480&id=gX6VczTLnV3E&format=png';
-
-  String get backdropUrlW300 => posterPath != null
-      ? 'https://image.tmdb.org/t/p/w300${backdropPath ?? posterPath}'
-      : 'https://img.icons8.com/?size=480&id=gX6VczTLnV3E&format=png';
-
-  String get imageUrlOriginal => posterPath != null
-      ? 'https://image.tmdb.org/t/p/original$posterPath'
-      : 'https://img.icons8.com/?size=480&id=gX6VczTLnV3E&format=png';
-
-  String get imageUrlW500 => posterPath != null
-      ? 'https://image.tmdb.org/t/p/w500$posterPath'
-      : 'https://img.icons8.com/?size=480&id=gX6VczTLnV3E&format=png';
-
-  String get imageUrlW300 => posterPath != null
-      ? 'https://image.tmdb.org/t/p/w300$posterPath'
-      : 'https://img.icons8.com/?size=480&id=gX6VczTLnV3E&format=png';
+  String get backdropUrlOriginal => _getImageUrl('original', isBackdrop: true);
+  String get backdropUrlW500 => _getImageUrl('w500', isBackdrop: true);
+  String get backdropUrlW300 => _getImageUrl('w300', isBackdrop: true);
+  String get imageUrlOriginal => _getImageUrl('original');
+  String get imageUrlW500 => _getImageUrl('w500');
+  String get imageUrlW300 => _getImageUrl('w300');
+  String get imageUrlW200 => _getImageUrl('w200');
 }
 
 @freezed
