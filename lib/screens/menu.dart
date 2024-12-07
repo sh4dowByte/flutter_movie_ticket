@@ -93,7 +93,7 @@ class _MenuPageState extends State<MenuPage> {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Pallete.cyan.withOpacity(0.6), // Glow color
+                        color: Colors.blue.withOpacity(0.3), // Glow color
                         blurRadius: 20, // Spread of the glow
                         spreadRadius: 2, // Intensity of the glow
                       ),
@@ -103,7 +103,7 @@ class _MenuPageState extends State<MenuPage> {
               ),
               AppSvgIcon(
                 icon,
-                color: !isActive ? Pallete.grey1 : Pallete.cyan,
+                color: !isActive ? Pallete.grey1 : Colors.blue,
               ),
             ],
           ),

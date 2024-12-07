@@ -5,7 +5,8 @@ import '../screens/menu.dart';
 
 class Routes {
   static const String menu = '/menu';
-  static const String movieDetail = '/movieDetail';
+  static const String movieDetail = '/movie_detail';
+  static const String movieSearch = '/movie_search';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -15,6 +16,9 @@ class Routes {
       case movieDetail:
         final int movieId = settings.arguments as int;
         return MaterialPageRoute(builder: (_) => MovieDetailPage(movieId));
+
+      case movieSearch:
+        return MaterialPageRoute(builder: (_) => const MovieSearchPage());
 
       case '/':
       default:

@@ -1,9 +1,7 @@
 import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_movie_booking_app/features/movie/data/models/movie_detail.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_caster.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_detail_provider.dart';
@@ -13,7 +11,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../widget/app_skeleton.dart';
 import '../widgets/app_cast_image.dart';
-import '../widgets/app_movie_card_box.dart';
+import '../widgets/app_movie_card.dart';
+import '../widgets/star_rating.dart';
 
 class MovieDetailPage extends ConsumerStatefulWidget {
   const MovieDetailPage(this.movieId, {super.key});
@@ -184,7 +183,7 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
                                           child: Text(
                                             value.genres
                                                 .map((e) => e.name.toString())
-                                                .join(','),
+                                                .join(', '),
                                             style:
                                                 const TextStyle(fontSize: 12),
                                           ),
@@ -374,8 +373,9 @@ class _MovieDetailContentState extends ConsumerState<MovieDetailContent> {
         const SizedBox(height: 20),
 
         // Caster
-        Visibility(
-          visible: casterState.value != null && casterState.value!.isNotEmpty,
+        Offstage(
+          offstage:
+              !(casterState.value != null && casterState.value!.isNotEmpty),
           child: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 16),
@@ -384,25 +384,25 @@ class _MovieDetailContentState extends ConsumerState<MovieDetailContent> {
         ),
 
         casterState.when(
-          data: (data) => SizedBox(
-            height: 130,
-            child: data.isNotEmpty
-                ? ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: data.length,
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      final item = data[index];
+          data: (data) => data.isNotEmpty
+              ? SizedBox(
+                  height: 130,
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: data.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final item = data[index];
 
-                      EdgeInsets margin = EdgeInsets.only(
-                        left: index == 0 ? 11 : 4,
-                        right: index == data.length - 1 ? 11 : 4,
-                      );
+                        EdgeInsets margin = EdgeInsets.only(
+                          left: index == 0 ? 11 : 4,
+                          right: index == data.length - 1 ? 11 : 4,
+                        );
 
-                      return AppCastImage(item: item, margin: margin);
-                    })
-                : Container(),
-          ),
+                        return AppCastImage(item: item, margin: margin);
+                      }),
+                )
+              : Container(),
           loading: () => AppMovieCoverBox.loading(),
           error: (error, stackTrace) => Center(child: Text('Error: $error')),
         ),
@@ -410,9 +410,9 @@ class _MovieDetailContentState extends ConsumerState<MovieDetailContent> {
         const SizedBox(height: 20),
 
         // Recomended
-        Visibility(
-          visible: recomendedState.value != null &&
-              recomendedState.value!.isNotEmpty,
+        Offstage(
+          offstage: !(recomendedState.value != null &&
+              recomendedState.value!.isNotEmpty),
           child: Padding(
             padding:
                 const EdgeInsets.symmetric(horizontal: 16).copyWith(bottom: 16),
@@ -420,28 +420,30 @@ class _MovieDetailContentState extends ConsumerState<MovieDetailContent> {
           ),
         ),
         recomendedState.when(
-          data: (data) => SizedBox(
-            height: 220,
-            child: ListView.builder(
-                shrinkWrap: true,
-                controller: _scrollControllerRecomended,
-                itemCount: data.length,
-                scrollDirection: Axis.horizontal,
-                itemBuilder: (context, index) {
-                  final item = data[index];
+          data: (data) => data.isNotEmpty
+              ? SizedBox(
+                  height: 220,
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      controller: _scrollControllerRecomended,
+                      itemCount: data.length,
+                      scrollDirection: Axis.horizontal,
+                      itemBuilder: (context, index) {
+                        final item = data[index];
 
-                  EdgeInsets margin = EdgeInsets.only(
-                    left: index == 0 ? 20 : 4,
-                    right: index == data.length - 1 ? 20 : 4,
-                  );
+                        EdgeInsets margin = EdgeInsets.only(
+                          left: index == 0 ? 20 : 4,
+                          right: index == data.length - 1 ? 20 : 4,
+                        );
 
-                  return AppMovieCoverBox(
-                    item: item,
-                    margin: margin,
-                    replaceRoute: true,
-                  );
-                }),
-          ),
+                        return AppMovieCoverBox(
+                          item: item,
+                          margin: margin,
+                          replaceRoute: true,
+                        );
+                      }),
+                )
+              : Container(),
           loading: () => AppMovieCoverBox.loading(),
           error: (error, stackTrace) => Center(child: Text('Error: $error')),
         ),
@@ -449,57 +451,5 @@ class _MovieDetailContentState extends ConsumerState<MovieDetailContent> {
         const SizedBox(height: 40),
       ],
     );
-  }
-}
-
-class StarRating extends StatelessWidget {
-  final double rating; // Nilai rating (misalnya 7.5 dari 10)
-  final int maxRange; // Total range nilai (default: 10)
-  final int maxStars; // Jumlah maksimal bintang yang ditampilkan
-  final Color starColor; // Warna bintang
-  final double starSize; // Ukuran bintang
-
-  const StarRating({
-    super.key,
-    required this.rating,
-    this.maxRange = 10,
-    this.maxStars = 5,
-    this.starColor = Colors.amber,
-    this.starSize = 20.0,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // Konversi rating dari range ke jumlah bintang
-    final double starRating = (rating / maxRange) * maxStars;
-
-    return Row(mainAxisSize: MainAxisSize.min, children: [
-      Text(
-        rating.toString(),
-        style: TextStyle(color: starColor),
-      ),
-      const SizedBox(width: 10),
-      ...List.generate(maxStars, (index) {
-        if (index < starRating.floor()) {
-          return Icon(
-            Icons.star,
-            color: starColor,
-            size: starSize,
-          );
-        } else if (index < starRating) {
-          return Icon(
-            Icons.star_half,
-            color: starColor,
-            size: starSize,
-          );
-        } else {
-          return Icon(
-            Icons.star_border,
-            color: starColor,
-            size: starSize,
-          );
-        }
-      }),
-    ]);
   }
 }

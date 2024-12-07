@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/genres_provider.dart';
-import 'package:flutter_movie_booking_app/features/movie/presentation/widgets/app_movie_card_box.dart';
+import 'package:flutter_movie_booking_app/features/movie/presentation/widgets/app_movie_card.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_discover_provider.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_now_playing.dart';
 import 'package:flutter_movie_booking_app/features/movie/providers/movie_popular_provider.dart';
 import 'package:flutter_movie_booking_app/widget/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../core/routes.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -60,6 +62,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     return Scaffold(
       body: ListView(
+        padding: const EdgeInsets.only(top: 0),
         children: [
           // Now Playing
           movieStateNowPlaying.when(
@@ -75,28 +78,32 @@ class _HomePageState extends ConsumerState<HomePage> {
 
           const SizedBox(height: 20),
           // Search
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 11),
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            height: 64,
-            decoration: BoxDecoration(
-              color: const Color(0xFF272727).withOpacity(0.3),
-              borderRadius: BorderRadius.circular(50),
-            ),
-            child: const Row(
-              children: [
-                Icon(
-                  Icons.search,
-                  color: Color(0xFFD9D9D9),
-                ),
-                SizedBox(width: 18),
-                Text(
-                  'Search...',
-                  style: TextStyle(
+          InkWell(
+            hoverColor: Colors.transparent, // Hapus efek hover
+            onTap: () => Navigator.pushNamed(context, Routes.movieSearch),
+            child: Container(
+              margin: const EdgeInsets.symmetric(horizontal: 11),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              height: 64,
+              decoration: BoxDecoration(
+                color: const Color(0xFF272727).withOpacity(0.3),
+                borderRadius: BorderRadius.circular(50),
+              ),
+              child: const Row(
+                children: [
+                  Icon(
+                    Icons.search,
                     color: Color(0xFFD9D9D9),
                   ),
-                ),
-              ],
+                  SizedBox(width: 18),
+                  Text(
+                    'Search...',
+                    style: TextStyle(
+                      color: Color(0xFFD9D9D9),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 

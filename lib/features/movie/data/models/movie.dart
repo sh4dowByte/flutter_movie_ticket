@@ -38,6 +38,7 @@ extension MovieImageUrl on Movie {
 
   // Getter untuk gambar ukuran 300px
   String get imageUrlW300 => 'https://image.tmdb.org/t/p/w300$posterPath';
+  String get imageUrlW200 => 'https://image.tmdb.org/t/p/w200$posterPath';
 
   String get backdropUrlOriginal =>
       'https://image.tmdb.org/t/p/original$backdropPath';

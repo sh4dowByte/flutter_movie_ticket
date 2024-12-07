@@ -26,7 +26,7 @@ class AppTicketCard extends StatelessWidget {
             child: ImageFiltered(
               imageFilter: ImageFilter.blur(sigmaX: 40, sigmaY: 40),
               child: CachedNetworkImage(
-                imageUrl: data.imageUrlW500,
+                imageUrl: data.imageUrlW300,
                 fit: BoxFit.fill,
                 errorWidget: (context, url, error) => const Icon(Icons.error),
               ),
