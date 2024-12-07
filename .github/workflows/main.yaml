@@ -18,6 +18,11 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Create .env file from secrets
+        run: |
+          echo "API_KEY=${{ secrets.YOUR_API_KEY }}" > .env
+          echo "TMDB_API_BASE_URL=https://api.themoviedb.org" >> .env
+
         # 2. Setup Java
       - name: Set Up Java
         uses: actions/setup-java@v3.12.0
