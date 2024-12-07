@@ -14,13 +14,17 @@ class AppImageSliderManual extends StatefulWidget {
 }
 
 class _AppImageSliderManualState extends State<AppImageSliderManual> {
-  final PageController _pageController = PageController(viewportFraction: 0.7);
+  final PageController _pageController = PageController(viewportFraction: 0.6);
   double _currentPage = 0;
 
   @override
   void initState() {
     super.initState();
+    // if (widget.onChange != null) {
+    //   widget.onChange!(widget.data[0]);
+    // }
     _pageController.addListener(() {
+      print('LISEN');
       setState(() {
         _currentPage = _pageController.page ?? 0;
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_movie_booking_app/widget/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../provider/ticket_provider.dart';
@@ -26,26 +27,44 @@ class _TicketPageState extends ConsumerState<TicketPage> {
     final ticketState = ref.watch(ticketProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('My Tickets'),
-      ),
+      appBar: AppBar(title: const Text('My Tickets'), actions: [
+        IconButton(
+          onPressed: () {
+            ref.read(ticketProvider.notifier).clearTicket();
+          },
+          icon: const Icon(Icons.clear_all),
+        ),
+        IconButton(
+          onPressed: () {
+            ref.read(ticketProvider.notifier).fetchTicket();
+          },
+          icon: const Icon(Icons.replay_outlined),
+        ),
+      ]),
       body: Padding(
         padding: const EdgeInsets.all(20.0).copyWith(right: 50),
         child: ticketState.when(
-          loading: () => const Text('Loading'),
-          error: (error, stackTrace) => Center(child: Text('Error: $error')),
-          data: (data) => Center(
-            child: SizedBox(
-              height: 500,
-              child: InfiniteDragableSlider(
-                iteamCount: data.length,
-                itemBuilder: (context, index) => SizedBox(
-                  child: AppTicketCard(data: data[index]),
+            loading: () => const Text('Loading'),
+            error: (error, stackTrace) => Center(child: Text('Error: $error')),
+            data: (data) {
+              if (data.isEmpty) {
+                return const Center(
+                  child: Text('No Ticket Found'),
+                );
+              }
+
+              return Center(
+                child: SizedBox(
+                  height: 500,
+                  child: InfiniteDragableSlider(
+                    iteamCount: data.length,
+                    itemBuilder: (context, index) => SizedBox(
+                      child: AppTicketCard(data: data[index]),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-        ),
+              );
+            }),
       ),
     );
   }

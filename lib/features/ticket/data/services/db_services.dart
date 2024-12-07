@@ -65,6 +65,11 @@ class DBService {
     );
   }
 
+  Future<void> clearTickets() async {
+    final db = await database;
+    await db.delete('ticket'); // Deletes all rows in the 'ticket' table
+  }
+
   Future<int> deleteTicket(int id) async {
     final db = await database;
     return await db.delete(

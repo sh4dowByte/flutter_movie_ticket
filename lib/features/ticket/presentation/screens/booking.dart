@@ -78,18 +78,20 @@ class BookingPage extends ConsumerWidget {
         children: [
           // Now Playing
           movieState.when(
-            loading: () => AppMovieCoverBox.loading(),
-            error: (error, stackTrace) => Center(child: Text('Error: $error')),
-            data: (data) => SizedBox(
-              height: 500,
-              child: AppImageSliderManual(
-                onChange: (movie) {
-                  bookingNotifier.updateBooking(movie: movie);
-                },
-                data: data.map((movie) => movie).take(10).toList(),
-              ),
-            ),
-          ),
+              loading: () => AppMovieCoverBox.loading(),
+              error: (error, stackTrace) =>
+                  Center(child: Text('Error: $error')),
+              data: (data) {
+                return SizedBox(
+                  height: 500,
+                  child: AppImageSliderManual(
+                    onChange: (movie) {
+                      bookingNotifier.updateBooking(movie: movie);
+                    },
+                    data: data.map((movie) => movie).take(10).toList(),
+                  ),
+                );
+              }),
 
           // Select date
           const Padding(

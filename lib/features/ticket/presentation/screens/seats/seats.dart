@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_movie_booking_app/features/ticket/presentation/screens/seats/components/seats_layout_component.dart';
 import 'package:flutter_movie_booking_app/features/ticket/provider/booking_provider.dart';
+import 'package:flutter_movie_booking_app/features/ticket/provider/ticket_provider.dart';
 import 'package:flutter_movie_booking_app/widget/widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -70,8 +71,14 @@ class SeatsPage extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(width: 24),
-                  const Expanded(
+                  Expanded(
                     child: AppButton(
+                      onTap: () {
+                        bookingNotifier.addTicket();
+                        ref.read(ticketProvider.notifier).fetchTicket();
+
+                        Navigator.pop(context);
+                      },
                       text: 'Continue',
                     ),
                   ),

@@ -110,6 +110,10 @@ class _InfiniteDragableSliderState extends State<InfiniteDragableSlider>
             children: List.generate(
               4,
               (stackIndex) {
+                if (widget.iteamCount == 0) {
+                  return Container();
+                }
+
                 final modIndex = (index + 3 - stackIndex) % widget.iteamCount;
 
                 if (stackIndex == 2 && widget.iteamCount == 1) {

@@ -1,4 +1,3 @@
-import 'package:flutter_movie_booking_app/features/movie/data/models/cast.dart';
 import 'package:flutter_movie_booking_app/features/ticket/data/services/db_services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,8 +18,21 @@ class TicketNotifier extends StateNotifier<AsyncValue<List<Ticket>>> {
 
   Future<void> fetchTicket() async {
     try {
+      state = const AsyncValue.loading();
+
       final movies = await _ticketDbService.getTicket();
       state = AsyncValue.data(movies);
+    } catch (e, s) {
+      state = AsyncValue.error(e, s);
+    }
+  }
+
+  Future<void> clearTicket() async {
+    try {
+      state = const AsyncValue.loading();
+
+      await _ticketDbService.clearTickets();
+      state = const AsyncValue.data([]);
     } catch (e, s) {
       state = AsyncValue.error(e, s);
     }
