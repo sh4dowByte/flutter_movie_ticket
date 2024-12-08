@@ -29,7 +29,7 @@ class AppTextSearch extends StatelessWidget {
           enabled: onTap == null,
           controller: controller,
           style: const TextStyle(
-            fontSize: 13, // Ukuran font teks
+            fontSize: 14, // Ukuran font teks
             height: 1.4, // Jarak baris teks
           ),
           onSubmitted: onSubmitted,
@@ -37,7 +37,7 @@ class AppTextSearch extends StatelessWidget {
             isDense: true,
             hintStyle: const TextStyle(
               color: Pallete.grey2,
-              fontSize: 13,
+              fontSize: 14,
             ),
             prefixIcon: icon,
             prefixIconConstraints: const BoxConstraints(

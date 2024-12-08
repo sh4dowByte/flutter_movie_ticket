@@ -52,6 +52,5 @@ class SearchMoviesNotifier extends StateNotifier<AsyncValue<List<Movie>>> {
 
   Future<void> resetSearch() async {
     state = const AsyncValue.error('Type to search', StackTrace.empty);
-    // state = const AsyncValue.loading(); // Reset loading state
   }
 }

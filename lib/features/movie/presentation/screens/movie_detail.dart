@@ -200,7 +200,7 @@ class _MovieDetailPageState extends ConsumerState<MovieDetailPage> {
                                     Row(
                                       children: [
                                         Text(
-                                          '${DateTime.parse(value.releaseDate).year} ⦿ ${formatRuntime(value.runtime)}',
+                                          '${value.formattedReleaseDate} ⦿ ${formatRuntime(value.runtime)}',
                                           style: Theme.of(context)
                                               .textTheme
                                               .labelSmall,
