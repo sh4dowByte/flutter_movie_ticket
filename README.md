@@ -78,6 +78,28 @@ This project is built using the following technologies:
 
 ```
 
+
+## ⚙️ Setup Environment
+
+To build this project locally, you need to add your TMDB API key. Follow the steps below to set up the environment variables:
+
+1. **Copy the `env` file to `.env`** in the root directory of the project.
+   
+   If you already have an `env` file, copy it with the following command:
+   ```bash
+   cp env .env
+   ```
+
+2. **Add the TMDB API key** in the `.env` file:
+
+   Open the `.env` file and add the following line:
+   ```plaintext
+   TMDB_ACCESS_TOKEN=YOUR_API_KEY
+   ```
+
+   Replace `YOUR_API_KEY` with your actual API key from [The Movie Database (TMDB)](https://www.themoviedb.org/).
+
+
 ## 🖼️ Screenshot
 
 | ![1733625287946](image/README/1733625287946.png) | ![1733625332802](image/README/1733625332802.png) | ![1733625358748](image/README/1733625358748.png) |
